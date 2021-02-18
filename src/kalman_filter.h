@@ -35,6 +35,12 @@ class KalmanFilter {
   void Predict();
 
   /**
+   * Executes common update steps of both Kalman filters
+   * @param y The measurement pre-fit residual at k
+   */
+  void UpdateRoutine(const Eigen::VectorXd &y);
+
+  /**
    * Updates the state by using standard Kalman Filter equations
    * @param z The measurement at k+1
    */

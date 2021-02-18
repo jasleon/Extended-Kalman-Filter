@@ -30,11 +30,10 @@ void KalmanFilter::Predict() {
   P_ = F_ * P_ * F_.transpose() + Q_;
 }
 
-void KalmanFilter::Update(const VectorXd &z) {
+void KalmanFilter::UpdateRoutine(const Eigen::VectorXd &y) {
   /**
-   * TODO: update the state by using Kalman Filter equations
+   * TODO: execute common update steps of both Kalman filters
    */
-  VectorXd y = z - H_ * x_;
   MatrixXd S = H_ * P_ * H_.transpose() + R_;
   MatrixXd K = P_ * H_.transpose() * S.inverse();
 
@@ -43,6 +42,16 @@ void KalmanFilter::Update(const VectorXd &z) {
   size_t x_size = x_.size();
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
   P_ = (I - K * H_) * P_;
+}
+
+void KalmanFilter::Update(const VectorXd &z) {
+  /**
+   * TODO: update the state by using Kalman Filter equations
+   */
+  // Calculate the measurement residual
+  VectorXd y = z - H_ * x_;
+  
+  UpdateRoutine(y);
 }
 
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
@@ -72,12 +81,5 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   while(y(1) >  M_PI) y(1) -= 2 * M_PI;
   while(y(1) < -M_PI) y(1) += 2 * M_PI;
 
-  MatrixXd S = H_ * P_ * H_.transpose() + R_;
-  MatrixXd K = P_ * H_.transpose() * S.inverse();
-
-  // Update state and covariance
-  x_ = x_ + K * y;
-  size_t x_size = x_.size();
-  MatrixXd I = MatrixXd::Identity(x_size, x_size);
-  P_ = (I - K * H_) * P_;
+  UpdateRoutine(y);
 }
