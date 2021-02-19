@@ -67,7 +67,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
   // Map from cartesian to polar coordinates
   double rho = hypot(px, py);
-  double phi = atan2(px, py);
+  double phi = atan2(py, px);
   double rho_dot = (px * vx + py * vy) / std::max(rho, 0.0001);
 
   // Predicted state in polar coordinates
